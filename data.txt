@@ -1,0 +1,7 @@
+route =generate_certificate
+obj of class generate_certificate
+initialize - a. get serializer b. get db session c.
+exceute method - exceute serializer for csv file
+insert serialized into db
+generate_certificates
+return pdf 

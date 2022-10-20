@@ -1,0 +1,438 @@
+def upload_csv(request : schemas.UploadBase, file: UploadFile = File(...)):
+    validate_csv(file)
+    
+    get_csv_data(file)
+    insert_data_into_db(file, request)
+    return 'success'
+   
+
+def validate_csv(csvfile):
+    if not csvfile.filename.endswith(".csv"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="csv only")
+    return csvfile
+
+
+def get_csv_data(csvfile):
+    csvReader = csv.DictReader(codecs.iterdecode(csvfile.file, 'utf-8'))
+    csv_data = []
+    for i in csvReader:
+        csv_data.append(i)  
+    return csv_data
+
+
+def insert_data_into_db(csvfile, request : schemas.UploadBase, db : Session = Depends(get_db)):
+    csvReader = csv.DictReader(codecs.iterdecode(csvfile.file, 'utf-8'))
+    buffer = []
+    for row in csv.reader:
+        buffer.append({
+            'name' : row[0]
+        })
+        if len(buffer) % 10000 == 0:
+            Session.bulk_insert_mappings(buffer)
+            buffer = []
+    Session.bulk_insert_mappings(buffer)
+    return request
+
+
+
+csv_data = []
+    for i in csvReader:
+        csv_data.append(i) 
+
+
+
+
+from re import template
+from urllib.request import Request
+from routers import admin, login
+from fastapi import FastAPI, status, UploadFile, HTTPException, Response
+from fastapi import File, BackgroundTasks, Depends
+
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+import uvicorn
+
+import models
+from database.database import engine, SessionLocal, get_db
+import pandas as pd
+
+app = FastAPI()
+
+templates = Jinja2Templates(directory="templates")
+
+models.UploadDetails.metadata.create_all(engine)
+
+app.include_router(login.router)
+app.include_router(admin.router)
+
+
+@app.post("/cookie-and-object/")
+def create_cookie(response: Response):
+    response.set_cookie(key="fake", value="fake-cookie ")
+    return {"message": "Come to the dark side, we have cookies"}
+    with open('file_data.txt', 'r') as file:
+        for i in file:
+            for j in i[0]:
+                data = j.read()
+                details = ast.literal_eval(data)
+        for key, value in details.items():
+            print('{}'.format(value))
+
+
+""" with open('file_data.txt', 'r') as file:
+        
+        details = ast.literal_eval(file.read())
+        #print(details)
+
+        converted_into_dict_details = dict(details)
+    print(converted_into_dict_details) """
+
+
+
+
+
+    """ for key, value in details.items():
+        print('{}'.format(value)) """
+    
+    """ with open("file_data.txt","r") as f:
+        data = f.read()
+
+    data.replace('Name','"Name"').replace('Email','"Email"')
+    json.loads(data)
+    print(data) """
+
+
+
+    """  
+    file = open('file_data.txt', 'r')
+    content = file.read()
+    print(content) """
+
+    
+
+
+    """ for data in csvReader:
+        new_data = models.UploadDetails(
+            issued_by = request.issued_by, designation = request.designation, completion_date = request.completion_date
+        )
+
+        db.add(new_data)
+        db.commit()
+        db.refresh(new_data)
+
+    return data """
+
+    
+    
+        
+   
+
+
+
+""" 
+    with open('csvfile.csv', 'r') as file:
+        no_records = 1
+        for row in file:
+            new = models.UploadDetails("INSERT into details Values(?,?)")
+            db.add(new)
+            db.commit(new)
+            db.refresh(new) """
+
+
+read csv
+
+ #print(csv_data)
+    """ with open('file_data.txt', 'w') as file:
+        for i in csv_data:
+            file.write('%s\n' %i)
+            #file.writelines(dict(csv_data)) """
+
+""" df = pd.read_csv(csvfile.file)
+    
+    print(df, file=open('file_data.csv','w'))  """
+
+    """  for i in df:
+        file = open('file_data.csv', 'w')
+        writer = csv.writer(file)
+        header = ['Name', 'Email']
+        writer.writerow(header)
+        writer.writerows(df)
+        file.close() """
+
+
+//javascript with fastapi?
+
+upload file
+# for row in csv_data:
+        
+    #     user_input = models.UploadDetails(name = row['Name'], email = row['Email'])
+    #     print(user_input)
+    #     db.add(user_input)
+    #     db.commit()
+    #     db.refresh(user_input)
+    # print(csv_data)
+    # print(csvReader)
+    # print(type(csvReader))
+
+    
+    # with open('file_data.txt', 'w') as file:  
+    #     file.write(json.dumps(csv_data, indent=4))
+
+
+    # def insert_data_into_db( request : schemas.UploadBase, db : Session ):
+#     with open('file_data.txt', 'r') as file:
+#         data = ast.literal_eval(file.read())       
+#         for row in data:
+#             user_input = models.UploadDetails(completion_date = None, issued_by = request.issued_by, 
+#                                               designation = request.designation, name = row['Name'], email = row['Email'])
+#             db.add(user_input)
+#             db.commit()
+#             db.refresh(user_input)
+#     return user_inputs
+
+
+def download_single_certificate(id : int, db : Session):
+    query = db.query(models.UploadDetails).filter(models.UploadDetails.id == id).first()
+    print(query)
+    if not query:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'certificate with {id} is not available')
+    else:
+        query = db.query(models.UploadDetails.id, models.UploadDetails.completion_date, models.UploadDetails.issued_by,
+                     models.UploadDetails.designation,
+                     models.UploadDetails.name).filter(models.UploadDetails.id).first()
+        print(query)
+        
+        id = str(query['id'])
+        completion_date = str(query['completion_date'])
+        issued_by = str(query['issued_by']).title()
+        designation = str(query['designation']).title()
+        name = str(query['name']).title()
+
+        qr_code = qrcode.QRCode(box_size=6)
+        qr_code.add_data("https://www.youtube.com/watch?v=bLsJ8HkIjwU")
+        qr_code.make()
+        qr_image = qr_code.make_image()
+
+        open_image = Image.open("templates/certificate4.png")
+        draw_image = ImageDraw.Draw(open_image)
+        open_image.paste(qr_image, (1580, 1050))
+        my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
+        my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+        my_font3 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+        my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 35)           
+        draw_image.text((820, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((375, 1120), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1120), issued_by, font=my_font3, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1200), designation, font=my_font4, fill=(20,20,20), anchor='mm')
+        img_reduced_size = open_image.resize((1000, 720))
+        img_reduced_size.save(f"certificates/{id}_certificate.png")
+    return download_certificate()
+
+
+@router.get('/download_single_certificate')
+def download_single_certificate(id : int, db : Session = Depends(get_db)):
+    return FileResponse(admin.download_single_certificate(id, db), media_type="application/pdf", filename="download.pdf")
+
+, current_user : schemas.User = Depends(oauth2.get_current_user)
+
+
+<script type="text/javascript">
+  document.getElementById("hideme").style.display = "none";
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization",sessionStorage.getItem("token"));
+  //  console.log(sessionStorage.getItem("token"));
+
+    formElem.onsubmit = async (e) => {
+    e.preventDefault();
+    let response = await fetch('https://still-harbor-79180.herokuapp.com/admin/find', {
+      method: 'post',
+      headers:myHeaders,  
+      body: new FormData(formElem)
+
+    });
+
+    let result = await response.json();
+        console.log(result);
+        
+    if(result=='Not Found'){
+      alert('Error 404 Not Found : Certificate does not exists');
+    }
+    else{
+        var table = document.getElementById('body');
+        document.getElementById("hideme").style.display = "block";
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td scope="row">' + result.id + '</td>' +
+          '<td>' + result.name + '</td>'+
+          '<td>' + result.by1 + '</td>'+
+          '<td>' + result.certi_for + '</td>'+ '<td>' + result.certi_of + '</td>';
+          table.appendChild(tr);
+        
+    }
+  
+};
+
+</script>
+
+
+
+
+
+
+
+# def generate_certificate(select_template : int, db):
+#     index = db.query(models.UploadDetails.id).first()
+#     query = db.query(models.UploadDetails.id, models.UploadDetails.completion_date, models.UploadDetails.issued_by,
+#                      models.UploadDetails.designation,
+#                      models.UploadDetails.name).filter(models.UploadDetails.id).all()
+    
+#     for row in query:
+#         print(row)
+
+#         id = str(row['id'])
+#         completion_date = str(row['completion_date'])
+#         issued_by = str(row['issued_by']).title()
+#         designation = str(row['designation']).title()
+#         name = str(row['name']).title()
+
+#         qr_code = qrcode.QRCode(box_size=6)
+#         qr_code.add_data("https://www.youtube.com/watch?v=bLsJ8HkIjwU")
+#         qr_code.make()
+#         qr_image = qr_code.make_image()
+
+#         if select_template == 1:
+#             open_image = Image.open("templates/certificate1.png")
+#             draw_image = ImageDraw.Draw(open_image)
+#             open_image.paste(qr_image, (650, 1130))
+#             my_font = ImageFont.truetype('font/Amsterdam.ttf', 250)
+#             my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 50)
+#             draw_image.text((738, 690), name, font=my_font, fill=(209, 182, 86), anchor='mm')
+#             draw_image.text((314, 1214), "Date Of Completion", font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((314, 1300), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((1150, 1214), issued_by, font=my_font2, fill=(112, 86, 199), anchor='mm')
+#             draw_image.text((1150, 1300), designation, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             img_reduced_size = open_image.resize((1000, 720))
+#             img_reduced_size.save(f"certificates/template1_certificate/{id}_certificate.png")
+
+
+#         elif select_template == 2:
+#             open_image = Image.open("templates/certificate2.png")
+#             draw_image = ImageDraw.Draw(open_image)
+#             open_image.paste(qr_image, (900, 1000))
+#             my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
+#             my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 50)     
+#             draw_image.text((950, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((380, 1050), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((1600, 1050), issued_by, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((1600, 1170), designation, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             img_reduced_size = open_image.resize((1000, 720))
+#             img_reduced_size.save(f"certificates/template2_certificate/{id}_certificate.png")
+
+
+#         elif select_template == 3:
+#             open_image = Image.open("templates/certificate3.png")
+#             draw_image = ImageDraw.Draw(open_image)
+#             open_image.paste(qr_image, (900, 980))
+#             my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
+#             my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+#             my_font3 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+#             my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 30)           
+#             draw_image.text((950, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((650, 1040), completion_date, font=my_font2, fill=(209, 182, 86), anchor='mm')
+#             draw_image.text((1350, 1040), issued_by, font=my_font3, fill=(209, 182, 86), anchor='mm')
+#             draw_image.text((1350, 1120), designation, font=my_font4, fill=(255, 255, 255), anchor='mm')
+#             img_reduced_size = open_image.resize((1000, 720))
+#             img_reduced_size.save(f"certificates/template3_certificate/{id}_certificate.png")
+
+
+#         elif select_template == 4:
+#             open_image = Image.open("templates/certificate4.png")
+#             draw_image = ImageDraw.Draw(open_image)
+#             open_image.paste(qr_image, (1580, 1050))
+#             my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
+#             my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+#             my_font3 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+#             my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 35)           
+#             draw_image.text((820, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((375, 1120), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((1200, 1120), issued_by, font=my_font3, fill=(69, 69, 69), anchor='mm')
+#             draw_image.text((1200, 1200), designation, font=my_font4, fill=(20,20,20), anchor='mm')
+#             img_reduced_size = open_image.resize((1000, 720))
+#             img_reduced_size.save(f"certificates/{id}_certificate.png")        
+#         else:
+#             return "Template not available"
+#     return query
+
+
+<script>
+    document.getElementById("mytable").style.display = "none";
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization",sessionStorage.getItem("token"));
+    formElem.onsubmit = async (e) => {
+    e.preventDefault();
+    let response = await fetch('http://localhost:8000/admin/upload_csv', {
+      method: 'POST',
+      headers:myHeaders,
+      body: new FormData(formElem)
+    });
+
+    let result = await response.json();
+    if (result == true){
+        window.location.href="show.html";
+        alert("Data Uploaded");     
+
+    }
+    else{
+        console.log(result);
+        alert(result["detail"]);
+        
+    }
+    
+};
+</script>
+
+
+
+
+def download_single_certificate(id : int, db : Session):
+
+    if os.path.exists('certificates'):
+        shutil.rmtree('certificates/')
+        os.mkdir('certificates')
+    else:
+        os.mkdir('certificates')
+
+    query = db.query(models.UploadDetails.id, models.UploadDetails.completion_date, models.UploadDetails.issued_by,
+                     models.UploadDetails.designation,
+                     models.UploadDetails.name).filter(models.UploadDetails.id == id).first()
+    print(query)
+    if not query:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'certificate with {id} is not available')
+    else:
+      
+        id = str(query['id'])
+        completion_date = str(query['completion_date'])
+        issued_by = str(query['issued_by']).title()
+        designation = str(query['designation']).title()
+        name = str(query['name']).title()
+
+        qr_code = qrcode.QRCode(box_size=6)
+        qr_code.add_data("https://www.youtube.com/watch?v=bLsJ8HkIjwU")
+        qr_code.make()
+        qr_image = qr_code.make_image()
+
+        open_image = Image.open("templates/certificate3.png")
+        draw_image = ImageDraw.Draw(open_image)
+        open_image.paste(qr_image, (1580, 1050))
+        my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
+        my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+        my_font3 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
+        my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 35)           
+        draw_image.text((820, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((375, 1120), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1120), issued_by, font=my_font3, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1200), designation, font=my_font4, fill=(20,20,20), anchor='mm')
+        img_reduced_size = open_image.resize((1000, 720))
+        img_reduced_size.save(f"certificates/{id}_certificate.png")
+    return download_certificate()
