@@ -1,5 +1,3 @@
-from msilib import schema
-from urllib import request
 from fastapi import APIRouter, status, UploadFile, File, Depends, Form, HTTPException
 from database.database import get_db
 from fastapi.responses import FileResponse
