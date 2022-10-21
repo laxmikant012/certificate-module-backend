@@ -34,29 +34,29 @@ def upload_insert_csvfile_into_db(db : Session = Depends(get_db),  completion_da
 
 
 @router.get('/show_all_certificates')
-def show_all_certificates(db : Session = Depends(get_db)):
+def show_all_certificates(db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     return admin.show_all_certificates(db)
 
 @router.post('/find_certificate')
-def find_certificate(id : int = Form(), db : Session = Depends(get_db)):
+def find_certificate(id : int = Form(), db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     return admin.find_certificate(id, db)
 
 
 @router.put('/update_details')
-def update_details(id : int = Form(), name  : str = Form(), db : Session = Depends(get_db)):
+def update_details(id : int = Form(), name  : str = Form(), db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     return admin.update_details(id, name, db)
 
 
 @router.delete('/delete_certificate')
-def delete_user(id : int = Form(), db  : Session = Depends(get_db)):
+def delete_user(id : int = Form(), db  : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     return admin.delete_user(id, db)
 
 @router.get('/download_certificate')
-def download_certificate():
+def download_certificate(current_user : schemas.User = Depends(oauth2.get_current_user)):
     return FileResponse(admin.download_certificate(), media_type="application/pdf", filename='download.pdf')
 
 @router.post('/download_single_certificate')
-def download_single_certificate(id : int = Form(), db : Session = Depends(get_db)):
+def download_single_certificate(id : int = Form(), db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     if admin.download_single_certificate(id, db) == {'response': False}:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Certificate with {id} is not available")
     return FileResponse(admin.download_single_certificate(id, db), media_type="application/pdf", filename="download.pdf")
