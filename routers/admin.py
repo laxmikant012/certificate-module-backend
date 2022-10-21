@@ -56,7 +56,7 @@ def delete_user(id : int = Form(), db  : Session = Depends(get_db)):
     return admin.delete_user(id, db)
 
 @router.get('/download_certificate')
-def download_certificate(current_user : schemas.User = Depends(oauth2.get_current_user)):
+def download_certificate():
     return FileResponse(admin.download_certificate(), media_type="application/pdf", filename='download.pdf')
 
 @router.post('/download_single_certificate')
