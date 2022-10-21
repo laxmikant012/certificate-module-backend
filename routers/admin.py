@@ -43,7 +43,7 @@ def find_certificate(id : int = Form(), db : Session = Depends(get_db), current_
 
 
 @router.get('/verify_certificate/{id}')
-def verify_certificate(id , db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
+def verify_certificate(id , db : Session = Depends(get_db)):
     return admin.verify_certificate(id, db)
 
 
