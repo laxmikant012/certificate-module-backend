@@ -42,6 +42,11 @@ def find_certificate(id : int = Form(), db : Session = Depends(get_db), current_
     return admin.find_certificate(id, db)
 
 
+@router.get('/verify_certificate/{id}')
+def verify_certificate(id , db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
+    return admin.verify_certificate(id, db)
+
+
 @router.put('/update_details')
 def update_details(id : int = Form(), name  : str = Form(), db : Session = Depends(get_db), current_user : schemas.User = Depends(oauth2.get_current_user)):
     return admin.update_details(id, name, db)

@@ -36,10 +36,23 @@ def show_all_certificates(db : Session):
 def find_certificate(id : int, db : Session):
     certificate_id = db.query(models.UploadDetails.id, models.UploadDetails.name, models.UploadDetails.completion_date,
                               models.UploadDetails.issued_by, models.UploadDetails.designation).filter(models.UploadDetails.id == id).first()
-    if certificate_id:
+    if  certificate_id:
         return certificate_id
     else:
         return 'Not Found'
+
+
+def verify_certificate(id : int, db : Session):
+    certificate_id = db.query(models.UploadDetails.id, models.UploadDetails.name, models.UploadDetails.completion_date,
+                              models.UploadDetails.issued_by, models.UploadDetails.designation).filter(models.UploadDetails.id == int(id)).first()
+    if not certificate_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"certificate with id {id} not found" )
+    else:
+        return f"certificate with id {id} exists with the following details : "\
+               f" ID = {certificate_id['id']}" \
+               f" Certificate Given to = {str(certificate_id['name'])}," \
+               f" Certificate Issued by = {str(certificate_id['issued_by'])}," \
+        
 
 
 def update_details(id : int, name, db : Session):

@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import qrcode
 from .templates_config import coordinates_for_templates
 
-
+domain = "https://certificate-module-laxmikant.herokuapp.com"
 
 def generic_certificate_maker(**kwargs):
 
@@ -14,8 +14,9 @@ def generic_certificate_maker(**kwargs):
     issued_by = str(kwargs.get("request").issued_by).title()
     designation = str(kwargs.get("request").designation).title()
     name = str(kwargs.get("name")).title()
+    url = f'{domain}/admin/verify_certificate/{id}'
     qr_code = qrcode.QRCode(box_size=6)
-    qr_code.add_data("https://www.youtube.com/watch?v=bLsJ8HkIjwU")
+    qr_code.add_data(url)
     qr_code.make()
     qr_image = qr_code.make_image()
     template_id= kwargs.get("request").select_template
