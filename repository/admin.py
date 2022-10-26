@@ -13,6 +13,8 @@ import img2pdf
 import os, shutil
 import datetime
 
+domain = "http://127.0.0.1:8000"
+
 
 def upload_insert_csvfile_into_db(db , request, file):
     validated_csv_file = validate_csv(file)
@@ -103,9 +105,11 @@ def download_single_certificate(id : int, db : Session):
         issued_by = str(query['issued_by']).title()
         designation = str(query['designation']).title()
         name = str(query['name']).title()
+        url = f'{domain}/admin/verify_certificate/{id}'
 
         qr_code = qrcode.QRCode(box_size=6)
-        qr_code.add_data("https://www.youtube.com/watch?v=bLsJ8HkIjwU")
+        
+        qr_code.add_data(url)
         qr_code.make()
         qr_image = qr_code.make_image()
 
