@@ -13,7 +13,7 @@ import img2pdf
 import os, shutil
 import datetime
 
-domain = "http://127.0.0.1:8000"
+domain = "https://certificate-module-laxmikant.herokuapp.com"
 
 
 def upload_insert_csvfile_into_db(db , request, file):
