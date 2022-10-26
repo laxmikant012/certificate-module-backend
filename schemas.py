@@ -13,7 +13,7 @@ class UploadBase(BaseModel):
     @validator('select_template')
     def validate_select_template_id(cls, id):
         """if selected template id does not exist it assigns to 1."""
-        if id not in range(1,5):
+        if id not in range(1,3):
             id= 1 
         return id
     
