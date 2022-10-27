@@ -1,21 +1,12 @@
-from re import template
-from urllib.request import Request
 from routers import admin, login
-from fastapi import FastAPI, status, UploadFile, HTTPException, Response
-from fastapi import File, BackgroundTasks, Depends
-
-from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-import uvicorn
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import models
-from database.database import engine, SessionLocal, get_db
-import pandas as pd
+from database.database import engine
+
 
 app = FastAPI()
-
-templates = Jinja2Templates(directory="templates")
 
 models.UploadDetails.metadata.create_all(engine)
 
@@ -29,6 +20,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-
