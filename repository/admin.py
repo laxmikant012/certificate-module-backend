@@ -1,4 +1,4 @@
-from fastapi import  status, HTTPException
+from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from hashing import Hash
@@ -10,13 +10,14 @@ import schemas
 import csv
 import codecs
 import img2pdf
-import os, shutil
+import os
+import shutil
 import datetime
 
 domain = "https://certificate-module-laxmikant.herokuapp.com"
 
 
-def upload_insert_csvfile_into_db(db , request, file):
+def upload_insert_csvfile_into_db(db, request, file):
     validated_csv_file = validate_csv(file)
     if not validated_csv_file:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -30,47 +31,63 @@ def validate_csv(csvfile):
     return csvfile
 
 
-def show_all_certificates(db : Session):
+def show_all_certificates(db: Session):
     certificates = db.query(models.UploadDetails).all()
     return certificates
 
 
-def find_certificate(id : int, db : Session):
-    certificate_id = db.query(models.UploadDetails.id, models.UploadDetails.name, models.UploadDetails.completion_date,
-                              models.UploadDetails.issued_by, models.UploadDetails.designation).filter(models.UploadDetails.id == id).first()
-    if  certificate_id:
+def find_certificate(id: int, db: Session):
+    certificate_id = db.query(models.UploadDetails.id,
+                              models.UploadDetails.name,
+                              models.UploadDetails.completion_date,
+                              models.UploadDetails.issued_by,
+                              models.UploadDetails.designation).filter(
+                              models.UploadDetails.id == id).first()
+    if certificate_id:
         return certificate_id
     else:
         return 'Not Found'
 
 
-def verify_certificate(id : int, db : Session):
-    certificate_id = db.query(models.UploadDetails.id, models.UploadDetails.name, models.UploadDetails.completion_date,
-                              models.UploadDetails.issued_by, models.UploadDetails.designation).filter(models.UploadDetails.id == int(id)).first()
+def verify_certificate(id: int, db: Session):
+    certificate_id = db.query(models.UploadDetails.id,
+                              models.UploadDetails.name,
+                              models.UploadDetails.completion_date,
+                              models.UploadDetails.issued_by,
+                              models.UploadDetails.designation).filter(
+                              models.UploadDetails.id == int(id)).first()
     if not certificate_id:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"certificate with id {id} not found" )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"certificate with id {id} not found")
     else:
-        return f"certificate with id {id} exists with the following details : "\
+        return f"certificate with id {id} exists with" \
+               f"the following details : "\
                f" ID = {certificate_id['id']}" \
                f" Certificate Given to = {str(certificate_id['name'])}," \
-               f" Certificate Issued by = {str(certificate_id['issued_by'])}," \
-        
+               f" Certificate Issued by = {str(certificate_id['issued_by'])},"
 
 
-def update_details(id : int, name, db : Session):
-    query = db.query(models.UploadDetails).filter(models.UploadDetails.id == id).first()
+def update_details(id: int, name, db: Session):
+    query = db.query(models.UploadDetails).filter(
+                     models.UploadDetails.id == id).first()
     if not query:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'User with {id} does not exist')
-    db.query(models.UploadDetails).filter(models.UploadDetails.id == id).update({models.UploadDetails.name: name})
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'User with {id} does not exist')
+    db.query(models.UploadDetails).filter(
+             models.UploadDetails.id == id).update({
+                                            models.UploadDetails.name: name})
     db.commit()
     return "User Updated"
 
 
-def delete_user(id : int, db : Session):
-    query = db.query(models.UploadDetails).filter(models.UploadDetails.id == id).first()
+def delete_user(id: int, db: Session):
+    query = db.query(models.UploadDetails).filter(
+                     models.UploadDetails.id == id).first()
     if not query:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'certificate with {id} is not available')
-    db.query(models.UploadDetails).filter(models.UploadDetails.id == id).delete()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'certificate with {id} is not available')
+    db.query(models.UploadDetails).filter(
+             models.UploadDetails.id == id).delete()
     db.commit()
     return "User Deleted"
 
@@ -78,16 +95,14 @@ def delete_user(id : int, db : Session):
 def download_certificate():
     if os.path.exists("certificates"):
         with open("Downloads/certificate_list.pdf", "wb") as f:
-            f.write(img2pdf.convert([ "certificates/"+i[0:] for i in os.listdir("certificates/") if i.endswith(".png")]))
+            f.write(img2pdf.convert(["certificates/"+i[0:]
+                                    for i in os.listdir("certificates/")
+                                    if i.endswith(".png")]))
             return "Downloads/certificate_list.pdf"
-        # listofpngfiles = [i[0:] for i in os.listdir("certificates/") if i.endswith(".png")]
-        # pdf_file = img2pdf.convert(listofpngfiles)
-        # file = open("certficate_list01.pdf", "wb")
-        # file.write(pdf_file)
-        # file.close()
     return True
 
-def download_single_certificate(id : int, db : Session):
+
+def download_single_certificate(id: int, db: Session):
 
     if os.path.exists('certificates'):
         shutil.rmtree('certificates/')
@@ -95,9 +110,12 @@ def download_single_certificate(id : int, db : Session):
     else:
         os.mkdir('certificates')
 
-    query = db.query(models.UploadDetails.id, models.UploadDetails.completion_date, models.UploadDetails.issued_by,
+    query = db.query(models.UploadDetails.id,
+                     models.UploadDetails.completion_date,
+                     models.UploadDetails.issued_by,
                      models.UploadDetails.designation,
-                     models.UploadDetails.name).filter(models.UploadDetails.id == id).first()
+                     models.UploadDetails.name).filter(
+                     models.UploadDetails.id == id).first()
     print(query)
     if query:
         id = str(query['id'])
@@ -106,45 +124,43 @@ def download_single_certificate(id : int, db : Session):
         designation = str(query['designation']).title()
         name = str(query['name']).title()
         url = f'{domain}/admin/verify_certificate/{id}'
-
         qr_code = qrcode.QRCode(box_size=6)
-        
         qr_code.add_data(url)
         qr_code.make()
         qr_image = qr_code.make_image()
-
         open_image = Image.open("templates/certificate3.png")
         draw_image = ImageDraw.Draw(open_image)
         open_image.paste(qr_image, (1580, 1050))
         my_font = ImageFont.truetype('font/Amsterdam.ttf', 240)
         my_font2 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
         my_font3 = ImageFont.truetype('font/Poppins-Medium.ttf', 40)
-        my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 35)           
-        draw_image.text((820, 690), name, font=my_font, fill=(69, 69, 69), anchor='mm')
-        draw_image.text((375, 1120), completion_date, font=my_font2, fill=(69, 69, 69), anchor='mm')
-        draw_image.text((1200, 1120), issued_by, font=my_font3, fill=(69, 69, 69), anchor='mm')
-        draw_image.text((1200, 1200), designation, font=my_font4, fill=(20,20,20), anchor='mm')
+        my_font4 = ImageFont.truetype('font/Poppins-Medium.ttf', 35)
+        draw_image.text((820, 690), name, font=my_font, fill=(69, 69, 69),
+                        anchor='mm')
+        draw_image.text((375, 1120), completion_date,
+                        font=my_font2, fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1120), issued_by, font=my_font3,
+                        fill=(69, 69, 69), anchor='mm')
+        draw_image.text((1200, 1200), designation, font=my_font4,
+                        fill=(20, 20, 20), anchor='mm')
         img_reduced_size = open_image.resize((1000, 720))
         img_reduced_size.save(f"certificates/{id}_certificate.png")
         return download_certificate()
-        
     else:
-      return {'response': False}
-        
+        return {'response': False}
 
 
+def create_user(request: schemas.User, db: Session):
 
-def create_user(request : schemas.User, db : Session):
-
-    new_user = models.User(name = request.name, email = request.email, password = Hash.bcrypt(request.password))
+    new_user = models.User(name=request.name, email=request.email,
+                           password=Hash.bcrypt(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return {"user added": new_user, "success": True}
 
 
-
-def get_csv_data(db : Session, request, csvfile):
+def get_csv_data(db: Session, request, csvfile):
 
     if os.path.exists('certificates'):
         shutil.rmtree('certificates/')
@@ -152,27 +168,34 @@ def get_csv_data(db : Session, request, csvfile):
     else:
         os.mkdir('certificates')
 
-
     csvReader = csv.DictReader(codecs.iterdecode(csvfile.file, 'utf-8'))
     try:
-        get_last_id = db.query(models.UploadDetails.id).order_by(models.UploadDetails.created_on.desc()).limit(1).one()
-        get_last_id= get_last_id["id"]  
+        get_last_id = db.query(models.UploadDetails.id).order_by(
+                               models.UploadDetails.created_on.
+                               desc()).limit(1).one()
+        get_last_id = get_last_id["id"]
         csv_data = []
     except NoResultFound:
         get_last_id = 0
     for row in csvReader:
-        
-        user_input = models.UploadDetails(completion_date=request.completion_date, issued_by=request.issued_by,
-                                          designation=request.designation, name=row['Name'], email=row['Email'], created_on= datetime.datetime.utcnow())
+        user_input = models.UploadDetails(completion_date=request.
+                                          completion_date,
+                                          issued_by=request.issued_by,
+                                          designation=request.designation,
+                                          name=row['Name'],
+                                          email=row['Email'],
+                                          created_on=datetime.datetime.
+                                          utcnow())
         db.add(user_input)
         csv_data.append({
-            "completion_date":request.completion_date,
-            "issued_by":request.issued_by,
-            "designation":request.designation,
+            "completion_date": request.completion_date,
+            "issued_by": request.issued_by,
+            "designation": request.designation,
             "name": row['Name'],
-            "email":row['Email']
+            "email": row['Email']
         })
         get_last_id = get_last_id + 1
-        generic_certificate_maker(id=get_last_id, request=request, name=row['Name'], email=row['Email'])  
+        generic_certificate_maker(id=get_last_id, request=request,
+                                  name=row['Name'], email=row['Email'])
     db.commit()
     return {"data uploaded": csv_data, "success": True}

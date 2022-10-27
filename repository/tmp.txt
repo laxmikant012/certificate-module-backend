@@ -436,3 +436,10 @@ def download_single_certificate(id : int, db : Session):
         img_reduced_size = open_image.resize((1000, 720))
         img_reduced_size.save(f"certificates/{id}_certificate.png")
     return download_certificate()
+
+
+     # listofpngfiles = [i[0:] for i in os.listdir("certificates/") if i.endswith(".png")]
+        # pdf_file = img2pdf.convert(listofpngfiles)
+        # file = open("certficate_list01.pdf", "wb")
+        # file.write(pdf_file)
+        # file.close()
