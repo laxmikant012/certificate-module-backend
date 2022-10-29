@@ -8,7 +8,7 @@ from database.database import engine
 
 app = FastAPI()
 
-models.UploadDetails.metadata.create_all(engine)
+models.Base.metadata.create_all(engine)
 
 app.include_router(login.router)
 app.include_router(admin.router)
