@@ -78,4 +78,4 @@ def download_single_certificate(id: int = Form(),
 
 @router.get('/download_xlfile')
 def download_xlfile():
-    return FileResponse("C:/Users/Nitro/Desktop/Test.xlsx",media_type="application/xls", filename='download.xlsx')
+    return FileResponse("C:/Users/Nitro/Desktop/Project/certificate-module/Test.xlsx",media_type="application/xls", filename='download.xlsx')
