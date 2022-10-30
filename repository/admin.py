@@ -174,7 +174,7 @@ def get_csv_data(db: Session, request, csvfile):
                                models.UploadDetails.created_on.
                                desc()).limit(1).one()
         get_last_id = get_last_id["id"]
-        csv_data = []
+        # csv_data = []
     except NoResultFound:
         get_last_id = 0
     for row in csvReader:
@@ -187,15 +187,16 @@ def get_csv_data(db: Session, request, csvfile):
                                           created_on=datetime.datetime.
                                           utcnow())
         db.add(user_input)
-        csv_data.append({
-            "completion_date": request.completion_date,
-            "issued_by": request.issued_by,
-            "designation": request.designation,
-            "name": row['Name'],
-            "email": row['Email']
-        })
+        # csv_data.append({
+        #     "completion_date": request.completion_date,
+        #     "issued_by": request.issued_by,
+        #     "designation": request.designation,
+        #     "name": row['Name'],
+        #     "email": row['Email']
+        # })
         get_last_id = get_last_id + 1
         generic_certificate_maker(id=get_last_id, request=request,
                                   name=row['Name'], email=row['Email'])
     db.commit()
-    return {"data uploaded": csv_data, "success": True}
+    # return {"data uploaded": csv_data, "success": True}
+    return {"success": True}
