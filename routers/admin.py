@@ -76,6 +76,3 @@ def download_single_certificate(id: int = Form(),
     return FileResponse(admin.download_single_certificate(id, db),
                         media_type="application/pdf", filename="download.pdf")
 
-@router.get('/download_xlfile')
-def download_xlfile():
-    return FileResponse("Test.xlsx",media_type="application/xls", filename='download.xlsx')
