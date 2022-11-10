@@ -56,9 +56,9 @@ def update_details(id: int = Form(), name: str = Form(),
     return admin.update_details(id, name, db)
 
 
-@router.delete('/delete_certificate')
-def delete_user(id: int = Form(), db: Session = Depends(get_db)):
-    return admin.delete_user(id, db)
+@router.delete('/delete_record')
+def delete_record(id: int = Form(), db: Session = Depends(get_db)):
+    return admin.delete_record(id, db)
 
 
 @router.get('/download_certificate')

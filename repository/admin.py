@@ -80,7 +80,7 @@ def update_details(id: int, name, db: Session):
     return "User Updated"
 
 
-def delete_user(id: int, db: Session):
+def delete_record(id: int, db: Session):
     query = db.query(models.UploadDetails).filter(
                      models.UploadDetails.id == id).first()
     if not query:
@@ -89,7 +89,7 @@ def delete_user(id: int, db: Session):
     db.query(models.UploadDetails).filter(
              models.UploadDetails.id == id).delete()
     db.commit()
-    return "User Deleted"
+    return "Record Deleted"
 
 
 def download_certificate():
@@ -194,9 +194,11 @@ def get_csv_data(db: Session, request, csvfile):
         #     "name": row['Name'],
         #     "email": row['Email']
         # })
+        
         get_last_id = get_last_id + 1
         generic_certificate_maker(id=get_last_id, request=request,
                                   name=row['Name'], email=row['Email'])
     db.commit()
+ 
     # return {"data uploaded": csv_data, "success": True}
     return {"success": True}
