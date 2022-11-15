@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from jose import JWTError, jwt
 import schemas
 
@@ -17,7 +16,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def verify_token(token : str, credentials_exception):
+def verify_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
