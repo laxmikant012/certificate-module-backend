@@ -17,8 +17,8 @@ class UploadBase(BaseModel):
             id = 1
         return id
 
-    class Config:
-        orm_mode = True
+    # class Config:
+    #     orm_mode = True
 
 
 class User(BaseModel):
