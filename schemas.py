@@ -17,14 +17,17 @@ class UploadBase(BaseModel):
             id = 1
         return id
 
-    # class Config:
-    #     orm_mode = True
+    class Config:
+        orm_mode = True
 
 
 class User(BaseModel):
     name: str
     email: str
     password: str
+
+    class Config:
+        orm_mode = True
 
 
 class Login(BaseModel):
