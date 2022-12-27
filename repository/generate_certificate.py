@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import qrcode
 from .templates_config import coordinates_for_templates
 
-domain = "https://certificate-module-laxmikant.herokuapp.com"
+domain = "http://localhost:8000"
 
 
 def generic_certificate_maker(**kwargs):

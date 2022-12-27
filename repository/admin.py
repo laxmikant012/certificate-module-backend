@@ -14,7 +14,7 @@ import os
 import shutil
 import datetime
 
-domain = "https://certificate-module-laxmikant.herokuapp.com"
+domain = "http://localhost:8000"
 
 
 def upload_insert_csvfile_into_db(db, request, file):
